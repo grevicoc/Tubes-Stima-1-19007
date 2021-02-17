@@ -49,7 +49,14 @@ public class Bot {
 
         // Cari Worm yang masuk range snowball/banana
         Worm enemyWorm = getFirstWormInRangeSpecial();
-
+        if (enemyWorm != null) {
+            if (currentWorm.id==2 && canBananaBomb(currentWorm,enemyWorm)){
+                return new BananaCommand(enemyWorm.position.x,enemyWorm.position.y);
+            }else if (currentWorm.id==3 && canSnowball(currentWorm,enemyWorm)){
+                return new SnowballCommand(enemyWorm.position.x,enemyWorm.position.y);
+            }
+        }
+        // Cari Worm yang masuk range shot
         enemyWorm = getFirstWormInRange();
         if (enemyWorm != null) {
 
@@ -118,6 +125,7 @@ public class Bot {
 
         return null;
     }
+
     // Fungsi untuk mencari apakah musuh ada di dekatnya (radius 5)
     private Worm getFirstWormInRangeSpecial(){
         for (Worm enemyWorm : opponent.worms){
@@ -227,11 +235,13 @@ public class Bot {
     private boolean canBananaBomb(Worm ourWorm, Worm enemyWorm){
         if (ourWorm.id==2 && BananaCommand.used<3){
             int distanceBetweenThem = euclideanDistance(ourWorm.position.x,ourWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
-            
+
+            // Cek dulu ini bomb bakal friendly damage ga
             int distanceBetweenbomb1 = euclideanDistance(friendWorm1.position.x,friendWorm1.position.y,enemyWorm.position.x,enemyWorm.position.y);
-            int distanceBetweenbomb2 = euclideanDistance(friendWorm3.position.x,friendWorm3.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            int distanceBetweenbomb2 = euclideanDistance(friendWorm2.position.x,friendWorm2.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            int distanceBetweenbomb3 = euclideanDistance(friendWorm3.position.x,friendWorm3.position.y,enemyWorm.position.x,enemyWorm.position.y);
             if (distanceBetweenThem <= 5){
-                if(distanceBetweenbomb1 >2 && distanceBetweenbomb2>2){
+                if(distanceBetweenbomb1 >2 && distanceBetweenbomb2>2 && distanceBetweenbomb3>2){
                     return true;
                 }
             }
