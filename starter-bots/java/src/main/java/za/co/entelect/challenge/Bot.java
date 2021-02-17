@@ -64,6 +64,11 @@ public class Bot {
             return new ShootCommand(direction);
         }
 
+        // Worm 2 ikutin worm 1
+        if (currentWorm.id==2){
+            followWorm(currentWorm);
+        }
+
         List<Cell> surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
         int cellIdx = random.nextInt(surroundingBlocks.size());
 
@@ -216,29 +221,35 @@ public class Bot {
     private Command MoveCommandDir(String dir) {
         int pX = currentWorm.position.x;
         int pY = currentWorm.position.y;
-        if (dir == "N") {
+        if (dir.equals("N")) {
             pY -= 1;
-        } else if (dir == "NE"){
+        } else if (dir.equals("NE")){
             pX += 1;
             pY -= 1;
-        } else if (dir == "E"){
+        } else if (dir.equals("E")){
             pX += 1;
-        } else if (dir == "SE"){
+        } else if (dir.equals("SE")){
             pX += 1;
             pY += 1;
-        } else if (dir == "S"){
+        } else if (dir.equals("S")){
             pY += 1;
-        } else if (dir == "SW"){
+        } else if (dir.equals("SW")){
             pX -= 1;
             pY += 1;
-        } else if (dir == "W"){
+        } else if (dir.equals("W")){
             pX -= 1;
-        } else if (dir == "NW"){
+        } else if (dir.equals("NW")){
             pX -= 1;
             pY -= 1;
         }
         Cell block = gameState.map[pY][pX];
-        return new MoveCommand(block.x, block.y);
+        if (block.type == CellType.AIR) {
+            // return return String.format("move %d %d", x, y);
+            return new MoveCommand(block.x, block.y);
+        } else if (block.type == CellType.DIRT) {
+            return new DigCommand(block.x, block.y);
+        }
+        return new DoNothingCommand();
     }
 
     // Fungsi untuk mengecek apakah bisa melempar snowball
@@ -284,7 +295,8 @@ public class Bot {
 //            return new DigCommand() // dig by direction
 //        }
 //    }
-//    private Command followWorm(Worm ourWorm){
-//
-//    }
+    private Command followWorm(Worm ourWorm){
+        Direction followTo = resolveDirection(ourWorm.position,friendWorm1.position);
+        return MoveCommandDir(followTo.toString());
+    }
 }
