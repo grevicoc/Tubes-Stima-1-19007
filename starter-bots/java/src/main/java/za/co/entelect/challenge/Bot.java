@@ -213,6 +213,34 @@ public class Bot {
         return Direction.valueOf(builder.toString());
     }
 
+    private Command MoveCommandDir(String dir) {
+        int pX = currentWorm.position.x;
+        int pY = currentWorm.position.y;
+        if (dir == "N") {
+            pY -= 1;
+        } else if (dir == "NE"){
+            pX += 1;
+            pY -= 1;
+        } else if (dir == "E"){
+            pX += 1;
+        } else if (dir == "SE"){
+            pX += 1;
+            pY += 1;
+        } else if (dir == "S"){
+            pY += 1;
+        } else if (dir == "SW"){
+            pX -= 1;
+            pY += 1;
+        } else if (dir == "W"){
+            pX -= 1;
+        } else if (dir == "NW"){
+            pX -= 1;
+            pY -= 1;
+        }
+        Cell block = gameState.map[pY][pX];
+        return new MoveCommand(block.x, block.y);
+    }
+
     // Fungsi untuk mengecek apakah bisa melempar snowball
     private boolean canSnowball(Worm ourWorm, Worm enemyWorm){
 
