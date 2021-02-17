@@ -203,7 +203,29 @@ public class Bot {
         }
         return false;
     }
-
+    // Fungsi untuk mengecek apakah bisa melempar bananabomb
+    private boolean canBananaBomb(Worm ourWorm, Worm enemyWorm){
+        if (ourWorm.id==2 && BananaCommand.used<3){
+            int distanceBetweenThem = euclideanDistance(ourWorm.position.x,ourWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            
+            int distanceBetweenbomb1 = euclideanDistance(friendWorm1.position.x,friendWorm1.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            int distanceBetweenbomb2 = euclideanDistance(friendWorm3.position.x,friendWorm3.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            if (distanceBetweenThem <= 5){
+                if(distanceBetweenbomb1 >2 && distanceBetweenbomb2>2){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    function shortestPath(Position origin, Position destination) {
+        shortestPathCell = resolveDirection(origin, destination)
+        if (shortestPathCell.type == surfaceTypes.DIRT) {
+            return new MoveCommand() // move by direction
+        } else if (shortestPathCell.type == surfaceTypes.AIR) {
+            return new DigCommand() // dig by direction
+        }
+    }
 //    private Command followWorm(Worm ourWorm){
 //
 //    }
