@@ -17,11 +17,25 @@ public class Bot {
     private Opponent opponent;
     private MyWorm currentWorm;
 
+    private Worm friendWorm1;
+    private Worm friendWorm2;
+    private Worm friendWorm3;
+
     public Bot(Random random, GameState gameState) {
         this.random = random;
         this.gameState = gameState;
         this.opponent = gameState.opponents[0];
         this.currentWorm = getCurrentWorm(gameState);
+
+        for (Worm friendWorm : gameState.myPlayer.worms){
+            if (friendWorm.id==1){
+                friendWorm1 = friendWorm;
+            }else if(friendWorm.id==2){
+                friendWorm2 = friendWorm;
+            }else if(friendWorm.id==3){
+                friendWorm3 = friendWorm;
+            }
+        }
     }
 
     private MyWorm getCurrentWorm(GameState gameState) {
@@ -178,7 +192,8 @@ public class Bot {
 
     // Fungsi untuk mengecek apakah bisa melempar snowball
     private boolean canSnowball(Worm ourWorm, Worm enemyWorm){
-        if (ourWorm.id==3 && enemyWorm.roundsUntilUnfrozen==0){
+
+        if (ourWorm.id==3 && enemyWorm.roundsUntilUnfrozen==0 && SnowballCommand.used < 3){
 
             // Mengecek jarak lempar
             int distanceBetweenThem = euclideanDistance(ourWorm.position.x,ourWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
@@ -188,4 +203,8 @@ public class Bot {
         }
         return false;
     }
+
+//    private Command followWorm(Worm ourWorm){
+//
+//    }
 }

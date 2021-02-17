@@ -7,7 +7,7 @@ public class SnowballCommand implements Command{
 
     private final int x;
     private final int y;
-    public int used=0;
+    public static int used=0;
 
     public SnowballCommand(int x, int y){
         this.x = x;
