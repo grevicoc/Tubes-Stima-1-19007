@@ -175,4 +175,17 @@ public class Bot {
 
         return Direction.valueOf(builder.toString());
     }
+
+    // Fungsi untuk mengecek apakah bisa melempar snowball
+    private boolean canSnowball(Worm ourWorm, Worm enemyWorm){
+        if (ourWorm.id==3 && enemyWorm.roundsUntilUnfrozen==0){
+
+            // Mengecek jarak lempar
+            int distanceBetweenThem = euclideanDistance(ourWorm.position.x,ourWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            if (distanceBetweenThem <= 5){
+                return true;
+            }
+        }
+        return false;
+    }
 }
