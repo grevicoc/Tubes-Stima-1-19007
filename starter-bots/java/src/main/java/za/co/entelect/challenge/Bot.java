@@ -47,11 +47,15 @@ public class Bot {
 
     public Command run() {
 
-        Worm enemyWorm = getFirstWormInRange();
-        if (enemyWorm != null) {
+        // Cari Worm yang masuk range snowball/banana
+        Worm enemyWorm = getFirstWormInRangeSpecial();
 
+
+        enemyWorm = getFirstWormInRange();
+        if (enemyWorm != null) {
             Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
             return new ShootCommand(direction);
+
         }
 
         List<Cell> surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
@@ -113,6 +117,19 @@ public class Bot {
             }
         }
 
+        return null;
+    }
+
+    // Fungsi untuk mencari apakah musuh ada di dekatnya (radius 5)
+    private Worm getFirstWormInRangeSpecial(){
+        for (Worm enemyWorm : opponent.worms){
+
+            // Menghitung jarak
+            int distance = euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            if (distance <= 5){
+                return enemyWorm;
+            }
+        }
         return null;
     }
 
@@ -204,6 +221,12 @@ public class Bot {
         return false;
     }
 
+
+
+//    // Fungsi untuk mendekat ke health pack
+//    private Command goToHealthPack(Worm ourWorm){
+//
+//    }
 //    private Command followWorm(Worm ourWorm){
 //
 //    }
