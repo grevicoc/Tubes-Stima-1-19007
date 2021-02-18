@@ -52,6 +52,7 @@ public class Bot {
 
         // PRIO 1, cek apakah dekat worm 2 ada musuh
         Worm enemyWorm = isWorm2NearEnemy();
+        Worm dummy = getFirstWormInRange();
         if (enemyWorm!=null){
             if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
                 return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
@@ -61,6 +62,12 @@ public class Bot {
                 //TODO masukkin strategi sesuai priotitas di laporan
                 
             }else if (currentWorm.id==2){
+                if(dummy !=null){
+                    ShootCommand(resolveDirection(currentWorm.position, dummy.position));
+                }
+                else{
+                    followWorm(friendWorm1);
+                }
                 //TODO masukkin strategi sesuai priotitas di laporan
             }else if (currentWorm.id==3){
                 //TODO masukkin strategi sesuai priotitas di laporan
