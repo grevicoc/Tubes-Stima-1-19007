@@ -312,7 +312,7 @@ public class Bot {
 
     private Command followWorm(Worm ourWorm){
         Direction followTo = resolveDirection(ourWorm.position,friendWorm1.position);
-        return MoveCommandDir(followTo.toString());
+        return MoveByDirCommand(followTo.toString());
     }
 
     //Fungsi untuk mengecek apakah ada powerUp di 4 cell sekitar dia
@@ -348,7 +348,7 @@ public class Bot {
             }
         }
         Direction destination = resolveDirection(currentWorm.position, destinationWorm.position);
-        return MoveCommandDir(destination.toString());
+        return MoveByDirCommand(destination.toString());
 
     }
 
