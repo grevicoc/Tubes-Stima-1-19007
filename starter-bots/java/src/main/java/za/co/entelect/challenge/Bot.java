@@ -244,7 +244,7 @@ public class Bot {
     }
     
     // Fungsi untuk menentukan harus bergerak ke block mana tergantung arah yang diinginkan
-    private Command MoveCommandDir(String dir) {
+    private Command MoveByDirCommand(String dir) {
         int pX = currentWorm.position.x;
         int pY = currentWorm.position.y;
         if (dir.equals("N")) {
