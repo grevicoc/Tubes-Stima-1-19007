@@ -59,6 +59,7 @@ public class Bot {
         }else{
             if (currentWorm.id==1){
                 //TODO masukkin strategi sesuai priotitas di laporan
+                
             }else if (currentWorm.id==2){
                 //TODO masukkin strategi sesuai priotitas di laporan
             }else if (currentWorm.id==3){
@@ -298,14 +299,14 @@ public class Bot {
     }
 
     //Fungsi untuk mengecek apakah ada powerUp di 4 cell sekitar dia
-    private Cell checkPowerUpAround5(Worm ourWorm){
+    private Cell checkPowerUpAround5(){
 
         // Di fungsi ini dia punya "kesadaran" untuk nyari powerup kl healthnya < 25
-        if (ourWorm.health<25){
+        if (currentWorm.health<25){
 
             //loop mencari apakah ada power up di sekitar dia
-            for (int i=ourWorm.position.x-4; i<ourWorm.position.x+4;i++){
-                for (int j=ourWorm.position.y-4; i<ourWorm.position.y+4;j++){
+            for (int i=currentWorm.position.x-4; i<currentWorm.position.x+4;i++){
+                for (int j=currentWorm.position.y-4; i<currentWorm.position.y+4;j++){
                     if (gameState.map[i][j].powerUp.value==10){
                         return gameState.map[i][j];
                     }
