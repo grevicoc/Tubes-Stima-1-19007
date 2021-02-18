@@ -21,6 +21,8 @@ public class Bot {
     private Worm friendWorm2;
     private Worm friendWorm3;
 
+    private Cell healthPack;
+
     public Bot(Random random, GameState gameState) {
         this.random = random;
         this.gameState = gameState;
@@ -36,6 +38,7 @@ public class Bot {
                 friendWorm3 = friendWorm;
             }
         }
+
     }
 
     private MyWorm getCurrentWorm(GameState gameState) {
@@ -47,8 +50,16 @@ public class Bot {
 
     public Command run() {
 
+        Worm enemyWorm = getFirstWormInRangeSpecial(2);
+        if (enemyWorm != null) {
+            if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
+                return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
+            }
+        }
         // Cari Worm yang masuk range snowball/banana
-        Worm enemyWorm = getFirstWormInRangeSpecial();
+
+
+        enemyWorm = getFirstWormInRangeSpecial();
         if (enemyWorm != null) {
             if (currentWorm.id==2 && canBananaBomb(currentWorm,enemyWorm)){
                 return new BananaCommand(enemyWorm.position.x,enemyWorm.position.y);
@@ -144,6 +155,19 @@ public class Bot {
         return null;
     }
 
+    // Fungsi untuk mencari apakah ada musuh di dekat worm 2 (radius 5)
+    private Worm getFirstWormInRangeSpecial(int x){
+        for (Worm enemyWorm : opponent.worms){
+
+            // Menghitung jarak
+            int distance = euclideanDistance(friendWorm2.position.x,friendWorm2.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            if (distance <= 5){
+                return enemyWorm;
+            }
+        }
+        return null;
+    }
+
     private List<List<Cell>> constructFireDirectionLines(int range) {
         List<List<Cell>> directionLines = new ArrayList<>();
         for (Direction direction : Direction.values()) {
@@ -218,6 +242,7 @@ public class Bot {
         return Direction.valueOf(builder.toString());
     }
 
+    // Fungsi untuk menentukan harus bergerak ke block mana tergantung arah yang diinginkan
     private Command MoveCommandDir(String dir) {
         int pX = currentWorm.position.x;
         int pY = currentWorm.position.y;
@@ -265,10 +290,6 @@ public class Bot {
         }
         return false;
     }
-    //    // Fungsi untuk mendekat ke health pack
-//    private Command goToHealthPack(Worm ourWorm){
-//
-//    }
 
     // Fungsi untuk mengecek apakah bisa melempar bananabomb
     private boolean canBananaBomb(Worm ourWorm, Worm enemyWorm){
@@ -287,16 +308,47 @@ public class Bot {
         }
         return false;
     }
-//    function shortestPath(Position origin, Position destination) {
-//        shortestPathCell = resolveDirection(origin, destination)
-//        if (shortestPathCell.type == surfaceTypes.DIRT) {
-//            return new MoveCommand() // move by direction
-//        } else if (shortestPathCell.type == surfaceTypes.AIR) {
-//            return new DigCommand() // dig by direction
-//        }
-//    }
+
     private Command followWorm(Worm ourWorm){
         Direction followTo = resolveDirection(ourWorm.position,friendWorm1.position);
         return MoveCommandDir(followTo.toString());
     }
+
+    //Fungsi untuk mengecek apakah ada powerUp di 4 cell sekitar dia
+    private Cell checkPowerUpAround5(Worm ourWorm){
+
+        // Di fungsi ini dia punya "kesadaran" untuk nyari powerup kl healthnya < 25
+        if (ourWorm.health<25){
+
+            //loop mencari apakah ada power up di sekitar dia
+            for (int i=ourWorm.position.x-4; i<ourWorm.position.x+4;i++){
+                for (int j=ourWorm.position.y-4; i<ourWorm.position.y+4;j++){
+                    if (gameState.map[i][j].powerUp.value==10){
+                        return gameState.map[i][j];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Fungsi untuk bergerak ke enemy paling dekat
+    private Command goToNearestEnemy(){
+
+        Worm destinationWorm = friendWorm1;             //dummy agar tidak error, nantinya akan langsung berubah
+        int distanceWithNearestEnemy = 100;
+
+        for (Worm enemyWorm : opponent.worms){
+            // Menghitung jarak
+            int distance = euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            if(distance < distanceWithNearestEnemy){
+                distanceWithNearestEnemy = distance;
+                destinationWorm = enemyWorm;
+            }
+        }
+        Direction destination = resolveDirection(currentWorm.position, destinationWorm.position);
+        return MoveCommandDir(destination.toString());
+
+    }
+
 }
