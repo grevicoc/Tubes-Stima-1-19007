@@ -50,7 +50,7 @@ public class Bot {
 
     public Command run() {
 
-        Worm enemyWorm = getFirstWormInRangeSpecial(2);
+        Worm enemyWorm = getFirstWormInRangeSpecial();
         if (enemyWorm != null) {
             if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
                 return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
@@ -156,7 +156,7 @@ public class Bot {
     }
 
     // Fungsi untuk mencari apakah ada musuh di dekat worm 2 (radius 5)
-    private Worm getFirstWormInRangeSpecial(int x){
+    private Worm isWorm2NearEnemy(){
         for (Worm enemyWorm : opponent.worms){
 
             // Menghitung jarak
@@ -166,7 +166,7 @@ public class Bot {
             }
         }
         return null;
-}
+    }
 
     private List<List<Cell>> constructFireDirectionLines(int range) {
         List<List<Cell>> directionLines = new ArrayList<>();
