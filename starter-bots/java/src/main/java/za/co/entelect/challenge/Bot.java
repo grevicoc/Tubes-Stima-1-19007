@@ -166,7 +166,7 @@ public class Bot {
             }
         }
         return null;
-    }
+}
 
     private List<List<Cell>> constructFireDirectionLines(int range) {
         List<List<Cell>> directionLines = new ArrayList<>();
