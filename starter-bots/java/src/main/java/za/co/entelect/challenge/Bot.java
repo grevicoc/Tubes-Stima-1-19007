@@ -59,8 +59,36 @@ public class Bot {
         }else{
             if (currentWorm.id==1){
                 //TODO masukkin strategi sesuai priotitas di laporan
-                
+
+                // Greedy by Health_Pack
+                Cell dummyCell = checkPowerUpAround5();
+                if (dummyCell != null) {
+                    return MoveToCellCommand(dummyCell);
+                }
+
+                // Greedy by Enemy Position (Shot biasa)
+                Worm enemyWorm1 = getFirstWormInRange();
+                if (enemyWorm1 != null) {
+                    return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm1.position));
+                }
+
+                // Greedy by Center Map
+                return MoveToCenterCommand();
+
             }else if (currentWorm.id==2){
+                // Greedy by Enemy Position (Shot biasa)
+                Worm enemyWorm2 = getFirstWormInRange();
+                if(enemyWorm2 !=null){
+                    return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm2.position));
+                }
+
+                // Greedy by Follow Worm 1
+                if(friendWorm1.health>0){
+                    return followWorm();
+                }
+
+                return goToNearestEnemy();
+
                 //TODO masukkin strategi sesuai priotitas di laporan
             }else if (currentWorm.id==3){
                 //TODO masukkin strategi sesuai priotitas di laporan
@@ -204,6 +232,14 @@ public class Bot {
         return Direction.valueOf(builder.toString());
     }
 
+    //Fungsi untuk bergerak ke cell tertentu
+    private Command MoveToCellCommand(Cell target) {
+        Position destination = currentWorm.position;    //inisialisasi pertama doang, nantinya keubah
+        destination.x = target.x;
+        destination.y = target.y;
+        return MoveByDirCommand(resolveDirection(currentWorm.position, destination).toString());
+    }
+
     // Fungsi untuk bergerak(move/dig) ke tengah map
     private Command MoveToCenterCommand() {
         int pX = currentWorm.position.x;
@@ -309,8 +345,8 @@ public class Bot {
         return false;
     }
 
-    private Command followWorm(Worm ourWorm){
-        Direction followTo = resolveDirection(ourWorm.position,friendWorm1.position);
+    private Command followWorm(){
+        Direction followTo = resolveDirection(currentWorm.position,friendWorm1.position);
         return MoveByDirCommand(followTo.toString());
     }
 
