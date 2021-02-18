@@ -187,6 +187,7 @@ public class Bot {
         return Direction.valueOf(builder.toString());
     }
 
+    // Fungsi untuk bergerak(move/dig) ke tengah map
     private Command MoveToCenterCommand() {
         int pX = currentWorm.position.x;
         int pY = currentWorm.position.y;
