@@ -56,60 +56,61 @@ public class Bot {
             if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
                 return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
             }
-        }else{
-            if (currentWorm.id==1){
-                //TODO masukkin strategi sesuai priotitas di laporan
-
-                // Greedy by Health_Pack
-                Cell dummyCell = checkPowerUpAround5();
-                if (dummyCell != null) {
-                    return MoveToCellCommand(dummyCell);
-                }
-
-                // Greedy by Enemy Position (Shot biasa)
-                Worm enemyWorm1 = getFirstWormInRange();
-                if (enemyWorm1 != null) {
-                    return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm1.position));
-                }
-
-                // Greedy by Center Map
-                return MoveToCenterCommand();
-
-            }else if (currentWorm.id==2){
-                // Greedy by Enemy Position (Shot biasa)
-                Worm enemyWorm2 = getFirstWormInRange();
-                if(enemyWorm2 !=null){
-                    return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm2.position));
-                }
-
-                // Greedy by Follow Worm 1
-                if(friendWorm1.health>0){
-                    return followWorm();
-                }
-
-                return goToNearestEnemy();
-
-                //TODO masukkin strategi sesuai priotitas di laporan
-            }else if (currentWorm.id==3){
-                //TODO masukkin strategi sesuai priotitas di laporan
-
-                // Greedy by Special Weapon
-                Worm enemyWorm3 = getFirstWormInRangeSpecial();
-                if (enemyWorm3!=null && canSnowball(currentWorm,enemyWorm3)){
-                    return new SnowballCommand(enemyWorm3.position.x,enemyWorm.position.y);
-                }
-
-                // Greedy by Enemy Position (Shot biasa)
-                enemyWorm3 = getFirstWormInRange();
-                if (enemyWorm3!=null){
-                    Direction enemy3Direction = resolveDirection(currentWorm.position, enemyWorm3.position);
-                    return new ShootCommand(enemy3Direction);
-                }
-
-                return goToNearestEnemy();
-
-            }
         }
+
+        if (currentWorm.id==1){
+            //TODO masukkin strategi sesuai priotitas di laporan
+
+            // Greedy by Health_Pack
+            Cell dummyCell = checkPowerUpAround5();
+            if (dummyCell != null) {
+                return MoveToCellCommand(dummyCell);
+            }
+
+            // Greedy by Enemy Position (Shot biasa)
+            Worm enemyWorm1 = getFirstWormInRange();
+            if (enemyWorm1 != null) {
+                return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm1.position));
+            }
+
+            // Greedy by Center Map
+            return MoveToCenterCommand();
+
+        }else if (currentWorm.id==2){
+            // Greedy by Enemy Position (Shot biasa)
+            Worm enemyWorm2 = getFirstWormInRange();
+            if(enemyWorm2 !=null){
+                return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm2.position));
+            }
+
+            // Greedy by Follow Worm 1
+            if(friendWorm1.health>0){
+                return followWorm();
+            }
+
+            return goToNearestEnemy();
+
+            //TODO masukkin strategi sesuai priotitas di laporan
+        }else if (currentWorm.id==3){
+            //TODO masukkin strategi sesuai priotitas di laporan
+
+            // Greedy by Special Weapon
+            Worm enemyWorm3 = getFirstWormInRangeSpecial();
+            if (enemyWorm3!=null && canSnowball(currentWorm,enemyWorm3)){
+                return new SnowballCommand(enemyWorm3.position.x,enemyWorm.position.y);
+            }
+
+            // Greedy by Enemy Position (Shot biasa)
+            enemyWorm3 = getFirstWormInRange();
+            if (enemyWorm3!=null){
+                Direction enemy3Direction = resolveDirection(currentWorm.position, enemyWorm3.position);
+                return new ShootCommand(enemy3Direction);
+            }
+
+            return goToNearestEnemy();
+
+        }
+
 
         return new DoNothingCommand();
     }
@@ -272,7 +273,6 @@ public class Bot {
             // return return String.format("move %d %d", x, y);
             return new MoveCommand(block.x, block.y);
         } else if (block.type == CellType.DIRT) {
-
             return new DigCommand(block.x, block.y);
         }
         return new DoNothingCommand();
@@ -371,7 +371,7 @@ public class Bot {
     // Fungsi untuk bergerak ke enemy paling dekat
     private Command goToNearestEnemy(){
 
-        Worm destinationWorm = friendWorm1;             //dummy agar tidak error, nantinya akan langsung berubah
+        Worm destinationWorm = currentWorm;             //dummy agar tidak error, nantinya akan langsung berubah
         int distanceWithNearestEnemy = 100;
 
         for (Worm enemyWorm : opponent.worms){
