@@ -64,6 +64,22 @@ public class Bot {
                 //TODO masukkin strategi sesuai priotitas di laporan
             }else if (currentWorm.id==3){
                 //TODO masukkin strategi sesuai priotitas di laporan
+
+                // Greedy by Special Weapon
+                Worm enemyWorm3 = getFirstWormInRangeSpecial();
+                if (enemyWorm3!=null && canSnowball(currentWorm,enemyWorm3)){
+                    return new SnowballCommand(enemyWorm3.position.x,enemyWorm.position.y);
+                }
+
+                // Greedy by Enemy Position (Shot biasa)
+                enemyWorm3 = getFirstWormInRange();
+                if (enemyWorm3!=null){
+                    Direction enemy3Direction = resolveDirection(currentWorm.position, enemyWorm3.position);
+                    return new ShootCommand(enemy3Direction);
+                }
+
+                return goToNearestEnemy();
+
             }
         }
 
