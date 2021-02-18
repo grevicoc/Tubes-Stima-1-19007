@@ -85,42 +85,6 @@ public class Bot {
 
         // Cell block = surroundingBlocks.get(cellIdx);
 
-        int pX = currentWorm.position.x;
-        int pY = currentWorm.position.y;
-        if (pX > 16 && pY < 16) { // kuadran 1
-            pX -= 1;
-            pY += 1;
-        } else if (pX < 16 && pY < 16) { // kuadran 2
-            pX += 1;
-            pY += 1;
-        } else if (pX < 16 && pY > 16) { // kuadran 3
-            pX += 1;
-            pY -= 1;
-        } else if (pX > 16 && pY > 16) { // kuadran 4
-            pX -= 1;
-            pY -= 1;
-        } else if (pX == 17 && pY < 16) {
-            pY += 1;
-        } else if (pX == 17 && pY > 16) {
-            pY -= 1;
-        } else if (pX > 16 && pY == 17) {
-            pX -= 1;
-        } else if (pX < 16 && pY == 17) {
-            pY += 1;
-        } else {
-            pX += 1;
-
-            // return new MoveCommand(pX+1, pY+1);
-        }
-        Cell block = gameState.map[pY][pX];
-        if (block.type == CellType.AIR) {
-            // return return String.format("move %d %d", x, y);
-            return new MoveCommand(block.x, block.y);
-        } else if (block.type == CellType.DIRT) {
-
-            return new DigCommand(block.x, block.y);
-        }
-
         return new DoNothingCommand();
     }
 
@@ -242,8 +206,45 @@ public class Bot {
         return Direction.valueOf(builder.toString());
     }
 
+    private Command MoveToCenterCommand() {
+        int pX = currentWorm.position.x;
+        int pY = currentWorm.position.y;
+        if (pX > 16 && pY < 16) { // kuadran 1
+            pX -= 1;
+            pY += 1;
+        } else if (pX < 16 && pY < 16) { // kuadran 2
+            pX += 1;
+            pY += 1;
+        } else if (pX < 16 && pY > 16) { // kuadran 3
+            pX += 1;
+            pY -= 1;
+        } else if (pX > 16 && pY > 16) { // kuadran 4
+            pX -= 1;
+            pY -= 1;
+        } else if (pX == 17 && pY < 16) {
+            pY += 1;
+        } else if (pX == 17 && pY > 16) {
+            pY -= 1;
+        } else if (pX > 16 && pY == 17) {
+            pX -= 1;
+        } else if (pX < 16 && pY == 17) {
+            pY += 1;
+        } else {
+            pX += 1;
+        }
+        Cell block = gameState.map[pY][pX];
+        if (block.type == CellType.AIR) {
+            // return return String.format("move %d %d", x, y);
+            return new MoveCommand(block.x, block.y);
+        } else if (block.type == CellType.DIRT) {
+
+            return new DigCommand(block.x, block.y);
+        }
+        return new DoNothingCommand();
+    }
+    
     // Fungsi untuk menentukan harus bergerak ke block mana tergantung arah yang diinginkan
-    private Command MoveCommandDir(String dir) {
+    private Command MoveByDirCommand(String dir) {
         int pX = currentWorm.position.x;
         int pY = currentWorm.position.y;
         if (dir.equals("N")) {
