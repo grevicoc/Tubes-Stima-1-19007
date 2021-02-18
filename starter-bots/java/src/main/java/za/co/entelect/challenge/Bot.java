@@ -68,6 +68,12 @@ public class Bot {
                     MoveToCenterCommand();
                 }
             }else if (currentWorm.id==2){
+                if(dummy !=null){
+                    ShootCommand(resolveDirection(currentWorm.position, dummy.position));
+                }
+                else{
+                    followWorm(friendWorm1);
+                }
                 //TODO masukkin strategi sesuai priotitas di laporan
             }else if (currentWorm.id==3){
                 //TODO masukkin strategi sesuai priotitas di laporan
