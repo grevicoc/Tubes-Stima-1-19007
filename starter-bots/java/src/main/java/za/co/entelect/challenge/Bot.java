@@ -52,6 +52,7 @@ public class Bot {
 
         // PRIO 1, cek apakah dekat worm 2 ada musuh
         Worm enemyWorm = isWorm2NearEnemy();
+        Worm dummy = getFirstWormInRange();
         if (enemyWorm!=null){
             if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
                 return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
@@ -59,7 +60,13 @@ public class Bot {
         }else{
             if (currentWorm.id==1){
                 //TODO masukkin strategi sesuai priotitas di laporan
-                
+                if (checkPowerUpAround5() != null) {
+                    return new MoveToPositionCommand(checkPowerUpAround5());
+                } else if (dummy != null) {
+                    ShootCommand(resolveDirection(currentWorm.position, dummy.position));
+                } else {
+                    MoveToCenterCommand();
+                }
             }else if (currentWorm.id==2){
                 //TODO masukkin strategi sesuai priotitas di laporan
             }else if (currentWorm.id==3){
@@ -186,6 +193,14 @@ public class Bot {
         }
 
         return Direction.valueOf(builder.toString());
+    }
+
+    //Fungsi untuk bergerak ke cell tertentu
+    private Command MoveToCellCommand(Cell target) {
+        Position destination;
+        destination.x = target.x;
+        destination.y = target.y;
+        return new MoveByDirCommand(resolveDirection(currentWorm.position, destination));
     }
 
     // Fungsi untuk bergerak(move/dig) ke tengah map
