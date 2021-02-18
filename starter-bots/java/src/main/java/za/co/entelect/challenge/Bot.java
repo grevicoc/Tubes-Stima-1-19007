@@ -50,40 +50,21 @@ public class Bot {
 
     public Command run() {
 
-        Worm enemyWorm = getFirstWormInRangeSpecial();
-        if (enemyWorm != null) {
+        // PRIO 1, cek apakah dekat worm 2 ada musuh
+        Worm enemyWorm = isWorm2NearEnemy();
+        if (enemyWorm!=null){
             if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
                 return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
             }
-        }
-        // Cari Worm yang masuk range snowball/banana
-
-
-        enemyWorm = getFirstWormInRangeSpecial();
-        if (enemyWorm != null) {
-            if (currentWorm.id==2 && canBananaBomb(currentWorm,enemyWorm)){
-                return new BananaCommand(enemyWorm.position.x,enemyWorm.position.y);
-            }else if (currentWorm.id==3 && canSnowball(currentWorm,enemyWorm)){
-                return new SnowballCommand(enemyWorm.position.x,enemyWorm.position.y);
+        }else{
+            if (currentWorm.id==1){
+                //TODO masukkin strategi sesuai priotitas di laporan
+            }else if (currentWorm.id==2){
+                //TODO masukkin strategi sesuai priotitas di laporan
+            }else if (currentWorm.id==3){
+                //TODO masukkin strategi sesuai priotitas di laporan
             }
         }
-        // Cari Worm yang masuk range shot
-        enemyWorm = getFirstWormInRange();
-        if (enemyWorm != null) {
-
-            Direction direction = resolveDirection(currentWorm.position, enemyWorm.position);
-            return new ShootCommand(direction);
-        }
-
-        // Worm 2 ikutin worm 1
-        if (currentWorm.id==2){
-            followWorm(currentWorm);
-        }
-
-        List<Cell> surroundingBlocks = getSurroundingCells(currentWorm.position.x, currentWorm.position.y);
-        int cellIdx = random.nextInt(surroundingBlocks.size());
-
-        // Cell block = surroundingBlocks.get(cellIdx);
 
         return new DoNothingCommand();
     }
