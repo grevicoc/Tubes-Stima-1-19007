@@ -70,6 +70,8 @@ public class Bot {
         // PRIO 3, Strategi Greedy masing-masing worm
         if (currentWorm.id==1){
 
+            //STRATEGI GREEDY WORM 1
+
             // PRIO 3.1 Greedy by Health_Pack
             Cell dummyCell = checkPowerUpAround5();
             if (dummyCell != null) {
@@ -87,6 +89,8 @@ public class Bot {
 
         }else if (currentWorm.id==2){
 
+            //STRATEGI GREEDY WORM 2
+
             // PRIO 3.1 Greedy by Enemy Position (Shot biasa)
             Worm enemyWorm2 = getFirstWormInRange();
             if(enemyWorm2 !=null){
@@ -101,9 +105,9 @@ public class Bot {
             // PRIO 3.3 Greedy by Nearest Enemy
             return goToNearestEnemy();
 
-            //TODO masukkin strategi sesuai priotitas di laporan
         }else if (currentWorm.id==3){
-            //TODO masukkin strategi sesuai priotitas di laporan
+
+            //STRATEGI GREEDY WORM 3
 
             // PRIO 3.1 Greedy by Special Weapon
             Worm enemyWorm3 = getFirstWormInRangeSpecial();
@@ -145,7 +149,7 @@ public class Bot {
         return null;
     }
 
-    // Fungsi untuk mencari apakah musuh ada di dekatnya (radius 5)
+    // Fungsi untuk mencari apakah musuh ada di dekatnya (radius 5) dan khusus currentWorm
     private Worm getFirstWormInRangeSpecial(){
         for (Worm enemyWorm : opponent.worms){
 
@@ -158,7 +162,7 @@ public class Bot {
         return null;
     }
 
-    // Fungsi untuk mencari apakah ada musuh di dekat worm (radius 5)
+    // Fungsi untuk mencari apakah ada musuh di dekat worm (radius 5) worm bebas
     private Worm isWormNearEnemySpcAtk(Worm currentWorm){
         for (Worm enemyWorm : opponent.worms){
 
@@ -380,6 +384,7 @@ public class Bot {
         return false;
     }
 
+    //Fungsi untuk menyuruh worm saat ini mengikuti worm 1
     private Command followWorm(){
         Direction followTo = resolveDirection(currentWorm.position,friendWorm1.position);
         return MoveByDirCommand(followTo.toString());
