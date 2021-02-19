@@ -50,63 +50,75 @@ public class Bot {
 
     public Command run() {
 
-        // PRIO 1, cek apakah dekat worm 2 ada musuh
-        Worm enemyWorm = isWorm2NearEnemy();
+        // PRIO 1, cek apakah darah worm 1 sudah < 50
+        Worm enemyWorm = isWormNearEnemyAtk(friendWorm1);
+        if (friendWorm1.health>0 && friendWorm1.health<50 && enemyWorm!=null){
+            if (SelectCommand.dipanggil<5){
+                Direction enemyDirection = resolveDirection(friendWorm1.position, enemyWorm.position);
+                return new SelectCommand(1,new ShootCommand(enemyDirection));
+            }
+        }
+
+        // PRIO 2, cek apakah dekat worm 2 ada musuh
+        enemyWorm = isWormNearEnemySpcAtk(friendWorm2);
         if (enemyWorm!=null){
             if (SelectCommand.dipanggil<5 && BananaCommand.used<3){
                 return new SelectCommand(2,new BananaCommand(enemyWorm.position.x,enemyWorm.position.y));
             }
         }
 
+        // PRIO 3, Strategi Greedy masing-masing worm
         if (currentWorm.id==1){
-            //TODO masukkin strategi sesuai priotitas di laporan
 
-            // Greedy by Health_Pack
+            // PRIO 3.1 Greedy by Health_Pack
             Cell dummyCell = checkPowerUpAround5();
             if (dummyCell != null) {
                 return MoveToCellCommand(dummyCell);
             }
 
-            // Greedy by Enemy Position (Shot biasa)
+            // PRIO 3.2 Greedy by Enemy Position (Shot biasa)
             Worm enemyWorm1 = getFirstWormInRange();
             if (enemyWorm1 != null) {
                 return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm1.position));
             }
 
-            // Greedy by Center Map
+            // PRIO 3.3 Greedy by Center Map
             return MoveToCenterCommand();
 
         }else if (currentWorm.id==2){
-            // Greedy by Enemy Position (Shot biasa)
+
+            // PRIO 3.1 Greedy by Enemy Position (Shot biasa)
             Worm enemyWorm2 = getFirstWormInRange();
             if(enemyWorm2 !=null){
                 return new ShootCommand(resolveDirection(currentWorm.position, enemyWorm2.position));
             }
 
-            // Greedy by Follow Worm 1
+            // PRIO 3.2 Greedy by Follow Worm 1
             if(friendWorm1.health>0){
                 return followWorm();
             }
 
+            // PRIO 3.3 Greedy by Nearest Enemy
             return goToNearestEnemy();
 
             //TODO masukkin strategi sesuai priotitas di laporan
         }else if (currentWorm.id==3){
             //TODO masukkin strategi sesuai priotitas di laporan
 
-            // Greedy by Special Weapon
+            // PRIO 3.1 Greedy by Special Weapon
             Worm enemyWorm3 = getFirstWormInRangeSpecial();
             if (enemyWorm3!=null && canSnowball(currentWorm,enemyWorm3)){
-                return new SnowballCommand(enemyWorm3.position.x,enemyWorm.position.y);
+                return new SnowballCommand(enemyWorm3.position.x,enemyWorm3.position.y);
             }
 
-            // Greedy by Enemy Position (Shot biasa)
+            // PRIO 3.2 Greedy by Enemy Position (Shot biasa)
             enemyWorm3 = getFirstWormInRange();
             if (enemyWorm3!=null){
                 Direction enemy3Direction = resolveDirection(currentWorm.position, enemyWorm3.position);
                 return new ShootCommand(enemy3Direction);
             }
 
+            // PRIO 3.3 Greedy by Nearest Enemy
             return goToNearestEnemy();
 
         }
@@ -146,13 +158,26 @@ public class Bot {
         return null;
     }
 
-    // Fungsi untuk mencari apakah ada musuh di dekat worm 2 (radius 5)
-    private Worm isWorm2NearEnemy(){
+    // Fungsi untuk mencari apakah ada musuh di dekat worm (radius 5)
+    private Worm isWormNearEnemySpcAtk(Worm currentWorm){
         for (Worm enemyWorm : opponent.worms){
 
             // Menghitung jarak
-            int distance = euclideanDistance(friendWorm2.position.x,friendWorm2.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            int distance = euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
             if (distance <= 5){
+                return enemyWorm;
+            }
+        }
+        return null;
+    }
+
+    // FUngsi untuk mencari apakah ada musuh di dekat worm (radius 4)
+    private Worm isWormNearEnemyAtk(Worm currentWorm){
+        for (Worm enemyWorm : opponent.worms){
+
+            // Menghitung jarak
+            int distance = euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            if (distance <= 4){
                 return enemyWorm;
             }
         }
@@ -235,9 +260,7 @@ public class Bot {
 
     //Fungsi untuk bergerak ke cell tertentu
     private Command MoveToCellCommand(Cell target) {
-        Position destination = currentWorm.position;    //inisialisasi pertama doang, nantinya keubah
-        destination.x = target.x;
-        destination.y = target.y;
+        Position destination = new Position(target.x,target.y);
         return MoveByDirCommand(resolveDirection(currentWorm.position, destination).toString());
     }
 
@@ -320,8 +343,17 @@ public class Bot {
 
             // Mengecek jarak lempar
             int distanceBetweenThem = euclideanDistance(ourWorm.position.x,ourWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
+
+            // Cek dulu ini bomb bakal friendly damage ga
+            int distanceBetweenSnowball1 = euclideanDistance(friendWorm1.position.x,friendWorm1.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            int distanceBetweenSnowball2 = euclideanDistance(friendWorm2.position.x,friendWorm2.position.y,enemyWorm.position.x,enemyWorm.position.y);
+            int distanceBetweenSnowball3 = euclideanDistance(friendWorm3.position.x,friendWorm3.position.y,enemyWorm.position.x,enemyWorm.position.y);
+
+
             if (distanceBetweenThem <= 5){
-                return true;
+                if(distanceBetweenSnowball1 > 1 && distanceBetweenSnowball2 > 1 && distanceBetweenSnowball3 > 1){
+                    return true;
+                }
             }
         }
         return false;
@@ -330,12 +362,15 @@ public class Bot {
     // Fungsi untuk mengecek apakah bisa melempar bananabomb
     private boolean canBananaBomb(Worm ourWorm, Worm enemyWorm){
         if (ourWorm.id==2 && BananaCommand.used<3){
+
+            // Mengecek jarak lempar
             int distanceBetweenThem = euclideanDistance(ourWorm.position.x,ourWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
 
             // Cek dulu ini bomb bakal friendly damage ga
             int distanceBetweenbomb1 = euclideanDistance(friendWorm1.position.x,friendWorm1.position.y,enemyWorm.position.x,enemyWorm.position.y);
             int distanceBetweenbomb2 = euclideanDistance(friendWorm2.position.x,friendWorm2.position.y,enemyWorm.position.x,enemyWorm.position.y);
             int distanceBetweenbomb3 = euclideanDistance(friendWorm3.position.x,friendWorm3.position.y,enemyWorm.position.x,enemyWorm.position.y);
+
             if (distanceBetweenThem <= 5){
                 if(distanceBetweenbomb1 >2 && distanceBetweenbomb2>2 && distanceBetweenbomb3>2){
                     return true;
@@ -358,8 +393,8 @@ public class Bot {
 
             //loop mencari apakah ada power up di sekitar dia
             for (int i=currentWorm.position.x-4; i<currentWorm.position.x+4;i++){
-                for (int j=currentWorm.position.y-4; i<currentWorm.position.y+4;j++){
-                    if (gameState.map[i][j].powerUp.value==10){
+                for (int j=currentWorm.position.y-4; j<currentWorm.position.y+4;j++){
+                    if (gameState.map[i][j].powerUp != null){
                         return gameState.map[i][j];
                     }
                 }
@@ -377,7 +412,7 @@ public class Bot {
         for (Worm enemyWorm : opponent.worms){
             // Menghitung jarak
             int distance = euclideanDistance(currentWorm.position.x,currentWorm.position.y,enemyWorm.position.x,enemyWorm.position.y);
-            if(distance < distanceWithNearestEnemy){
+            if(distance < distanceWithNearestEnemy && enemyWorm.health>0){
                 distanceWithNearestEnemy = distance;
                 destinationWorm = enemyWorm;
             }
